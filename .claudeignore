@@ -1,0 +1,165 @@
+# Claude Code - Context Ignore File
+# Esclude cartelle e file non necessari dal contesto di Claude
+# per migliorare performance e focus sugli elementi rilevanti del progetto
+
+# === Dependencies e Package Managers ===
+node_modules/
+.pnp/
+.pnp.js
+target/
+build/
+dist/
+out/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.eggs/
+*.egg-info/
+*.egg
+.pytest_cache/
+.venv/
+venv/
+ENV/
+env/
+
+# === Git e Version Control ===
+# Git è consultato solo in caso di errori specifici
+.git/
+.gitignore
+.gitattributes
+*.orig
+*.swp
+*.swo
+
+# === IDE e Editor ===
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# === Build e Compile ===
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.tmp
+*.cache
+
+# === Testing e Coverage ===
+coverage/
+.nyc_output/
+htmlcov/
+.coverage
+.coverage.*
+junit/
+test-results/
+*.cover
+
+# === OS Files ===
+.DS_Store
+Thumbs.db
+desktop.ini
+*.bak
+*~
+
+# === Lockfiles e Package Metadata ===
+# Consulta solo se ci sono problemi con dipendenze
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+poetry.lock
+Pipfile.lock
+mvn.lock
+
+# === Assets Binari e Media ===
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.ico
+*.svg
+*.webp
+*.mp4
+*.mp3
+*.pdf
+*.zip
+*.tar.gz
+*.rar
+
+# === Environment e Secrets ===
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+secrets/
+credentials/
+
+# === Database Files ===
+*.db
+*.sqlite
+*.sqlite3
+data/
+dumps/
+
+# === Generated Documentation ===
+# Escludi documentazione auto-generata, mantieni doc/
+javadoc/
+typedoc/
+sphinx/_build/
+
+# === Temporary Files ===
+tmp/
+temp/
+*.tmp
+*.temp
+
+# === Sistema e Logs ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# === Cloud e Deploy (escludi solo file generati) ===
+.terraform/
+*.tfstate
+*.tfstate.backup
+.serverless/
+
+# === Exceptions - File da INCLUDERE nel contesto ===
+# Questi file sono importanti anche se in cartelle generalmente ignorate
+!.github/workflows/*.yml
+!docker-compose*.yml
+!Dockerfile
+!.dockerignore
+!.gitignore
+!.editorconfig
+!.prettierrc
+!.eslintrc*
+!tsconfig*.json
+!angular.json
+!package.json
+!pom.xml
+!pyproject.toml
+!requirements.txt
+!README.md
+!LICENSE.md
+!CLAUDE.md
+
+# === Mantieni Sempre Accessibile ===
+# La cartella doc/ e i file di configurazione principali
+# sono SEMPRE accessibili (non vengono ignorati)

@@ -1,0 +1,262 @@
+{
+  "permissions": {
+    "allow": [
+      // === Operazioni Git ===
+      "Bash(git:*)",
+      "Bash(gh:*)",
+
+      // === Build e Dependency Management ===
+      "Bash(mvn:*)",
+      "Bash(npm:*)",
+      "Bash(pip:*)",
+      "Bash(pip3:*)",
+      "Bash(poetry:*)",
+
+      // === Docker e Container ===
+      "Bash(docker:*)",
+      "Bash(docker-compose:*)",
+
+      // === Database Operations ===
+      "Bash(mysql:*)",
+      "Bash(mongosh:*)",
+      "Bash(redis-cli:*)",
+
+      // === File System Operations ===
+      "Bash(chmod:*)",
+      "Bash(chown:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(tree:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(wc:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(touch:*)",
+      "Bash(echo:*)",
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+
+      // === Navigation ===
+      "Bash(cd:*)",
+      "Bash(pwd)",
+
+      // === Documentation ===
+      "Bash(for file in /media/federicocalo/D/prj/managementevents/doc/*/01-*.md)",
+      "Bash(done)",
+
+      // === Testing ===
+      "Bash(pytest:*)",
+      "Bash(jest:*)",
+      "Bash(ng test:*)",
+
+      // === Development Servers ===
+      "Bash(ng serve:*)",
+      "Bash(uvicorn:*)",
+      "Bash(python -m:*)",
+
+      // === Code Quality ===
+      "Bash(eslint:*)",
+      "Bash(prettier:*)",
+      "Bash(black:*)",
+      "Bash(flake8:*)",
+      "Bash(mypy:*)",
+      "Bash(checkstyle:*)",
+
+      // === Process Management ===
+      "Bash(ps:*)",
+      "Bash(kill:*)",
+      "Bash(pkill:*)",
+
+      // === System Info ===
+      "Bash(df:*)",
+      "Bash(du:*)",
+      "Bash(free:*)",
+      "Bash(top)",
+      "Bash(htop)",
+
+      // === File Operations - Auto-approve ===
+      // Claude può sempre modificare file senza chiedere
+      "Write(*)",
+      "Edit(*)",
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "NotebookEdit(*)"
+    ],
+    "deny": [
+      // Operazioni pericolose - Sempre negate
+      "Bash(rm -rf /)",
+      "Bash(dd:*)",
+      "Bash(mkfs:*)",
+      "Bash(fdisk:*)",
+      "Bash(format:*)",
+      "Bash(sudo rm:*)"
+    ],
+    "ask": [
+      // Operazioni che richiedono conferma - Solo eliminazioni
+      "Bash(rm *)",
+      "Bash(rm -r*)",
+      "Bash(rm -f*)",
+      "Bash(drop database:*)",
+      "Bash(truncate:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git push --force:*)"
+    ]
+  },
+  
+  "project": {
+    "name": "Management Events System",
+    "version": "1.0.0-MVP",
+    "root": "/media/federicocalo/D/prj/managementevents",
+    "modules": {
+      "backend": "backend",
+      "frontend": "frontend",
+      "ai_service": "ai-service-python",
+      "docs": "doc"
+    }
+  },
+  
+  "agents": {
+    "default": "full-stack",
+    "available": [
+      "full-stack",
+      "backend-java",
+      "frontend-angular",
+      "ai-python",
+      "database",
+      "devops",
+      "documentation"
+    ]
+  },
+  
+  "environment": {
+    "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk",
+    "MAVEN_OPTS": "-Xmx2048m",
+    "NODE_ENV": "development",
+    "PYTHONPATH": "${PROJECT_ROOT}/ai-service-python/src"
+  },
+
+  "context": {
+    "description": "Configurazione contesto file per Claude Code",
+    "ignore_file": ".claudeignore",
+    "priority_files": [
+      // === Documentazione Principale (Max Priority) ===
+      "CLAUDE.md",
+      "README.md",
+      "Progetto.md",
+      "LICENSE.md",
+
+      // === Documentazione Tecnica ===
+      "doc/**/*.md",
+
+      // === Configurazione Progetto ===
+      ".claude/**/*",
+      "docker-compose*.yml",
+      "Dockerfile*",
+      ".dockerignore",
+      ".editorconfig",
+
+      // === Backend Configuration ===
+      "backend/pom.xml",
+      "backend/src/main/resources/application*.yml",
+      "backend/src/main/resources/application*.properties",
+
+      // === Frontend Configuration ===
+      "frontend/package.json",
+      "frontend/angular.json",
+      "frontend/tsconfig*.json",
+      "frontend/.eslintrc*",
+      "frontend/.prettierrc*",
+
+      // === AI Service Configuration ===
+      "ai-service-python/pyproject.toml",
+      "ai-service-python/requirements*.txt",
+      "ai-service-python/poetry.lock",
+
+      // === CI/CD ===
+      ".github/workflows/*.yml",
+
+      // === Database ===
+      "backend/src/main/resources/db/migration/*.sql"
+    ],
+    "source_patterns": [
+      // === Backend Source ===
+      "backend/src/main/java/**/*.java",
+      "backend/src/test/java/**/*.java",
+
+      // === Frontend Source ===
+      "frontend/src/**/*.ts",
+      "frontend/src/**/*.html",
+      "frontend/src/**/*.css",
+      "frontend/src/**/*.scss",
+
+      // === AI Service Source ===
+      "ai-service-python/src/**/*.py",
+      "ai-service-python/tests/**/*.py"
+    ],
+    "conditional_access": [
+      {
+        "pattern": ".git/**/*",
+        "condition": "only_on_error",
+        "description": "Accedi a .git solo per debugging errori Git specifici"
+      },
+      {
+        "pattern": "node_modules/**/*",
+        "condition": "only_on_error",
+        "description": "Accedi a node_modules solo per risolvere problemi di dipendenze"
+      },
+      {
+        "pattern": "target/**/*",
+        "condition": "only_on_error",
+        "description": "Accedi a target/ solo per debugging build Maven"
+      },
+      {
+        "pattern": "**/package-lock.json",
+        "condition": "only_on_dependency_issues",
+        "description": "Consulta lockfile solo se ci sono conflitti di versione"
+      },
+      {
+        "pattern": "**/*.log",
+        "condition": "only_on_error",
+        "description": "Consulta log solo per troubleshooting"
+      }
+    ],
+    "max_file_size": "1MB",
+    "encoding": "UTF-8",
+    "notes": [
+      "La documentazione in doc/ ha sempre priorità massima",
+      "I file di configurazione sono sempre accessibili",
+      "node_modules, .git, target sono esclusi di default",
+      "Usa .claudeignore per esclusioni personalizzate"
+    ]
+  },
+
+  "commit": {
+    "format": "[fe/be/py/deploy] messaggio conciso",
+    "types": {
+      "fe": "Frontend - Modifiche Angular, TypeScript, HTML, CSS",
+      "be": "Backend - Modifiche Spring Boot, Java, API",
+      "py": "AI Service - Modifiche Python, FastAPI, ML",
+      "deploy": "DevOps - Docker, CI/CD, infrastruttura, database migrations"
+    },
+    "examples": [
+      "[fe] implementato componente lista eventi con PrimeNG",
+      "[be] aggiunto endpoint GET /api/events/{id}",
+      "[py] implementato chatbot con RAG e LangChain",
+      "[deploy] configurato GitHub Actions per deploy automatico",
+      "[be] fix validazione budget negativo in ExpenseAggregate",
+      "[fe] aggiornato EventListComponent con signal state"
+    ],
+    "rules": [
+      "Usa prefisso appropriato: fe, be, py, o deploy",
+      "Messaggio conciso ma descrittivo (max 72 caratteri)",
+      "Usa imperativo presente: 'aggiungi', 'implementa', 'fix'",
+      "Non usare punto finale",
+      "Se tocchi più aree, usa il prefisso dell'area principale"
+    ]
+  }
+}

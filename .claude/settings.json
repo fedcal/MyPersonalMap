@@ -5,21 +5,20 @@
       "Bash(git:*)",
       "Bash(gh:*)",
 
-      // === Build e Dependency Management ===
-      "Bash(mvn:*)",
-      "Bash(npm:*)",
+      // === Python & Dependency Management ===
       "Bash(pip:*)",
       "Bash(pip3:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
       "Bash(poetry:*)",
-
-      // === Docker e Container ===
-      "Bash(docker:*)",
-      "Bash(docker-compose:*)",
+      "Bash(source venv/bin/activate)",
+      "Bash(source ../venv/bin/activate)",
+      "Bash(python -c:*)",
+      "Bash(python -m:*)",
 
       // === Database Operations ===
       "Bash(mysql:*)",
-      "Bash(mongosh:*)",
-      "Bash(redis-cli:*)",
+      "Bash(alembic:*)",
 
       // === File System Operations ===
       "Bash(chmod:*)",
@@ -44,27 +43,18 @@
       "Bash(cd:*)",
       "Bash(pwd)",
 
-      // === Documentation ===
-      "Bash(for file in /media/federicocalo/D/prj/managementevents/doc/*/01-*.md)",
-      "Bash(done)",
-
       // === Testing ===
       "Bash(pytest:*)",
-      "Bash(jest:*)",
-      "Bash(ng test:*)",
+      "Bash(pytest-cov:*)",
 
       // === Development Servers ===
-      "Bash(ng serve:*)",
       "Bash(uvicorn:*)",
-      "Bash(python -m:*)",
+      "Bash(fastapi:*)",
 
       // === Code Quality ===
-      "Bash(eslint:*)",
-      "Bash(prettier:*)",
       "Bash(black:*)",
       "Bash(flake8:*)",
       "Bash(mypy:*)",
-      "Bash(checkstyle:*)",
 
       // === Process Management ===
       "Bash(ps:*)",
@@ -75,17 +65,21 @@
       "Bash(df:*)",
       "Bash(du:*)",
       "Bash(free:*)",
-      "Bash(top)",
-      "Bash(htop)",
 
       // === File Operations - Auto-approve ===
-      // Claude può sempre modificare file senza chiedere
       "Write(*)",
       "Edit(*)",
       "Read(*)",
       "Glob(*)",
       "Grep(*)",
-      "NotebookEdit(*)"
+      "NotebookEdit(*)",
+
+      // === Git Operations ===
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+
+      // === Web ===
+      "WebSearch"
     ],
     "deny": [
       // Operazioni pericolose - Sempre negate
@@ -97,166 +91,225 @@
       "Bash(sudo rm:*)"
     ],
     "ask": [
-      // Operazioni che richiedono conferma - Solo eliminazioni
+      // Operazioni che richiedono conferma
       "Bash(rm *)",
       "Bash(rm -r*)",
       "Bash(rm -f*)",
-      "Bash(drop database:*)",
+      "Bash(DROP DATABASE:*)",
       "Bash(truncate:*)",
       "Bash(git reset --hard:*)",
       "Bash(git push --force:*)"
     ]
   },
-  
+
   "project": {
-    "name": "Management Events System",
+    "name": "My Personal Map",
     "version": "1.0.0-MVP",
-    "root": "/media/federicocalo/D/prj/managementevents",
+    "description": "Applicazione Python per gestione mappe personali con segnaposti geografici",
+    "root": "/media/federicocalo/D/prj/myPersonalMap",
     "modules": {
-      "backend": "backend",
-      "frontend": "frontend",
-      "ai_service": "ai-service-python",
+      "backend": "pymypersonalmap",
       "docs": "doc"
+    },
+    "tech_stack": {
+      "backend": "FastAPI + SQLAlchemy + MySQL",
+      "geospatial": "GeoPandas + Shapely + Folium + GeoPy",
+      "gui": "CustomTkinter",
+      "testing": "pytest",
+      "database": "MySQL 8.0+ with spatial types"
     }
   },
-  
+
   "agents": {
-    "default": "full-stack",
+    "default": "backend-dev",
     "available": [
-      "full-stack",
-      "backend-java",
-      "frontend-angular",
-      "ai-python",
-      "database",
-      "devops",
-      "documentation"
+      {
+        "name": "backend-dev",
+        "description": "FastAPI backend development specialist",
+        "file": "agents/backend-dev.md"
+      },
+      {
+        "name": "database-expert",
+        "description": "MySQL spatial database and SQLAlchemy expert",
+        "file": "agents/database-expert.md"
+      },
+      {
+        "name": "documentation-writer",
+        "description": "Technical documentation specialist",
+        "file": "agents/documentation-writer.md"
+      },
+      {
+        "name": "test-engineer",
+        "description": "pytest testing specialist",
+        "file": "agents/test-engineer.md"
+      }
     ]
   },
-  
+
   "environment": {
-    "JAVA_HOME": "/usr/lib/jvm/java-21-openjdk",
-    "MAVEN_OPTS": "-Xmx2048m",
-    "NODE_ENV": "development",
-    "PYTHONPATH": "${PROJECT_ROOT}/ai-service-python/src"
+    "PYTHONPATH": "${PROJECT_ROOT}/pymypersonalmap",
+    "VIRTUAL_ENV": "${PROJECT_ROOT}/venv",
+    "DATABASE_URL": "mysql+pymysql://mypersonalmap_user:password@localhost:3306/mypersonalmap"
   },
 
   "context": {
-    "description": "Configurazione contesto file per Claude Code",
+    "description": "Configurazione contesto file per Claude Code - My Personal Map",
     "ignore_file": ".claudeignore",
     "priority_files": [
       // === Documentazione Principale (Max Priority) ===
       "CLAUDE.md",
       "README.md",
-      "Progetto.md",
-      "LICENSE.md",
+
+      // === Claude Configuration ===
+      ".claude/**/*",
 
       // === Documentazione Tecnica ===
-      "doc/**/*.md",
+      "doc/architecture.md",
+      "doc/database-design.md",
+      "doc/api-documentation.md",
+      "doc/tech-stack.md",
+      "doc/mapping-services-comparison.md",
 
       // === Configurazione Progetto ===
-      ".claude/**/*",
-      "docker-compose*.yml",
-      "Dockerfile*",
-      ".dockerignore",
-      ".editorconfig",
+      ".env.example",
+      "pymypersonalmap/requirements.txt",
+      "pymypersonalmap/config/settings.py",
+      "alembic.ini",
 
-      // === Backend Configuration ===
-      "backend/pom.xml",
-      "backend/src/main/resources/application*.yml",
-      "backend/src/main/resources/application*.properties",
-
-      // === Frontend Configuration ===
-      "frontend/package.json",
-      "frontend/angular.json",
-      "frontend/tsconfig*.json",
-      "frontend/.eslintrc*",
-      "frontend/.prettierrc*",
-
-      // === AI Service Configuration ===
-      "ai-service-python/pyproject.toml",
-      "ai-service-python/requirements*.txt",
-      "ai-service-python/poetry.lock",
-
-      // === CI/CD ===
-      ".github/workflows/*.yml",
-
-      // === Database ===
-      "backend/src/main/resources/db/migration/*.sql"
+      // === Entry Points ===
+      "pymypersonalmap/main.py",
+      "pymypersonalmap/database/session.py"
     ],
     "source_patterns": [
       // === Backend Source ===
-      "backend/src/main/java/**/*.java",
-      "backend/src/test/java/**/*.java",
+      "pymypersonalmap/**/*.py",
+      "pymypersonalmap/api/routes/*.py",
+      "pymypersonalmap/services/*.py",
+      "pymypersonalmap/models/*.py",
+      "pymypersonalmap/database/*.py",
+      "pymypersonalmap/config/*.py",
 
-      // === Frontend Source ===
-      "frontend/src/**/*.ts",
-      "frontend/src/**/*.html",
-      "frontend/src/**/*.css",
-      "frontend/src/**/*.scss",
+      // === Tests ===
+      "pymypersonalmap/tests/**/*.py",
 
-      // === AI Service Source ===
-      "ai-service-python/src/**/*.py",
-      "ai-service-python/tests/**/*.py"
+      // === Migrations ===
+      "alembic/versions/*.py"
     ],
     "conditional_access": [
       {
         "pattern": ".git/**/*",
         "condition": "only_on_error",
-        "description": "Accedi a .git solo per debugging errori Git specifici"
+        "description": "Accedi a .git solo per debugging errori Git"
       },
       {
-        "pattern": "node_modules/**/*",
+        "pattern": "venv/**/*",
         "condition": "only_on_error",
-        "description": "Accedi a node_modules solo per risolvere problemi di dipendenze"
+        "description": "Accedi a venv solo per problemi dipendenze"
       },
       {
-        "pattern": "target/**/*",
-        "condition": "only_on_error",
-        "description": "Accedi a target/ solo per debugging build Maven"
-      },
-      {
-        "pattern": "**/package-lock.json",
-        "condition": "only_on_dependency_issues",
-        "description": "Consulta lockfile solo se ci sono conflitti di versione"
+        "pattern": "__pycache__/**/*",
+        "condition": "never",
+        "description": "Ignora sempre cache Python"
       },
       {
         "pattern": "**/*.log",
         "condition": "only_on_error",
         "description": "Consulta log solo per troubleshooting"
+      },
+      {
+        "pattern": "htmlcov/**/*",
+        "condition": "only_on_coverage_analysis",
+        "description": "Accedi a coverage report solo per analisi copertura"
       }
     ],
     "max_file_size": "1MB",
     "encoding": "UTF-8",
     "notes": [
-      "La documentazione in doc/ ha sempre priorità massima",
+      "La documentazione in doc/ ha priorità massima",
       "I file di configurazione sono sempre accessibili",
-      "node_modules, .git, target sono esclusi di default",
-      "Usa .claudeignore per esclusioni personalizzate"
+      "venv, __pycache__, .git sono esclusi di default",
+      "Usa .claudeignore per esclusioni personalizzate",
+      "Priority a file con logica geospaziale (coordinate, spatial queries)"
     ]
   },
 
   "commit": {
-    "format": "[fe/be/py/deploy] messaggio conciso",
+    "format": "[type] messaggio conciso",
     "types": {
-      "fe": "Frontend - Modifiche Angular, TypeScript, HTML, CSS",
-      "be": "Backend - Modifiche Spring Boot, Java, API",
-      "py": "AI Service - Modifiche Python, FastAPI, ML",
-      "deploy": "DevOps - Docker, CI/CD, infrastruttura, database migrations"
+      "feat": "Nuova funzionalità (endpoint, service, model)",
+      "fix": "Bug fix",
+      "docs": "Solo documentazione",
+      "test": "Aggiunta o modifica test",
+      "refactor": "Refactoring senza cambio funzionalità",
+      "db": "Database migrations o schema changes",
+      "config": "Modifiche configurazione",
+      "deps": "Aggiornamento dipendenze"
     },
     "examples": [
-      "[fe] implementato componente lista eventi con PrimeNG",
-      "[be] aggiunto endpoint GET /api/events/{id}",
-      "[py] implementato chatbot con RAG e LangChain",
-      "[deploy] configurato GitHub Actions per deploy automatico",
-      "[be] fix validazione budget negativo in ExpenseAggregate",
-      "[fe] aggiornato EventListComponent con signal state"
+      "[feat] aggiungi endpoint POST /api/v1/markers",
+      "[feat] implementa MarkerService con geocoding",
+      "[db] crea migration per markers table con spatial index",
+      "[fix] correggi validazione coordinate latitude/longitude",
+      "[test] aggiungi test per operazioni spatial queries",
+      "[docs] documenta endpoint markers con esempi",
+      "[refactor] estrai logica geocoding in service separato",
+      "[config] aggiungi variabili ambiente per Nominatim"
     ],
     "rules": [
-      "Usa prefisso appropriato: fe, be, py, o deploy",
+      "Usa prefisso appropriato tra i types definiti",
       "Messaggio conciso ma descrittivo (max 72 caratteri)",
       "Usa imperativo presente: 'aggiungi', 'implementa', 'fix'",
       "Non usare punto finale",
-      "Se tocchi più aree, usa il prefisso dell'area principale"
+      "Per spatial data sempre menzionare SRID 4326 se rilevante",
+      "Per API specificare path endpoint se applicabile"
     ]
-  }
+  },
+
+  "development": {
+    "testing": {
+      "command": "pytest",
+      "coverage_command": "pytest --cov=pymypersonalmap --cov-report=term-missing",
+      "test_db": "mypersonalmap_test",
+      "coverage_threshold": 80
+    },
+    "formatting": {
+      "tool": "black",
+      "line_length": 88,
+      "command": "black pymypersonalmap/"
+    },
+    "linting": {
+      "tool": "flake8",
+      "command": "flake8 pymypersonalmap/"
+    },
+    "type_checking": {
+      "tool": "mypy",
+      "command": "mypy pymypersonalmap/"
+    },
+    "server": {
+      "dev_command": "uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+      "prod_command": "uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4"
+    }
+  },
+
+  "patterns": {
+    "architecture": "Layered: Presentation → API → Service → Repository → Database",
+    "api_versioning": "/api/v1/",
+    "coordinate_system": "SRID 4326 (WGS84) for all spatial data",
+    "geocoding_provider": "Nominatim (OpenStreetMap) - 1 req/sec rate limit",
+    "error_handling": "HTTP status codes + structured JSON error responses",
+    "authentication": "JWT tokens with refresh tokens",
+    "database_migrations": "Alembic for all schema changes"
+  },
+
+  "important_constraints": [
+    "SEMPRE usare SRID 4326 per dati spatial (GPS coordinates)",
+    "SEMPRE validare coordinate: lat [-90, 90], lon [-180, 180]",
+    "SEMPRE rispettare rate limit geocoding: 1 req/sec per Nominatim",
+    "SEMPRE usare spatial indexes su colonne POINT/LINESTRING",
+    "SEMPRE usare ST_Distance_Sphere per calcoli distanza accurate",
+    "SEMPRE usare dependency injection per database session",
+    "SEMPRE scrivere docstring Google style per funzioni pubbliche",
+    "SEMPRE creare migration Alembic per modifiche schema",
+    "SEMPRE scrivere test per nuove features (>80% coverage)"
+  ]
 }

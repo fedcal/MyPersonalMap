@@ -1,0 +1,63 @@
+"""
+Database Session Management
+
+SQLAlchemy database session configuration and management.
+"""
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.pool import StaticPool
+from config.settings import settings
+
+# Create SQLAlchemy engine
+engine = create_engine(
+    settings.DATABASE_URL,
+    echo=settings.DB_ECHO,
+    pool_pre_ping=True,
+    pool_recycle=3600,
+)
+
+# Create SessionLocal class
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+# Create Base class for models
+Base = declarative_base()
+
+
+def get_db():
+    """
+    Dependency to get database session
+
+    Usage in FastAPI:
+        @app.get("/items")
+        def get_items(db: Session = Depends(get_db)):
+            ...
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def init_db():
+    """
+    Initialize database
+
+    Creates all tables defined in models.
+    """
+    from models import marker, label, user  # Import all models
+    Base.metadata.create_all(bind=engine)
+
+
+def drop_db():
+    """
+    Drop all database tables
+
+    WARNING: This will delete all data!
+    """
+    Base.metadata.drop_all(bind=engine)

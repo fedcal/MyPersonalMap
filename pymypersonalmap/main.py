@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List, Optional
+from contextlib import asynccontextmanager
 import uvicorn
 from dotenv import load_dotenv
 import os
@@ -16,13 +17,41 @@ import os
 # Load environment variables
 load_dotenv()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Lifespan event handler for startup and shutdown events
+    """
+    # Startup
+    print("=" * 50)
+    print("My Personal Map API Starting...")
+    print(f"Version: 1.0.0")
+    print(f"Environment: {os.getenv('ENVIRONMENT', 'development')}")
+    print(f"Debug Mode: {os.getenv('DEBUG', 'true')}")
+    print("=" * 50)
+    # TODO: Initialize database connection
+    # TODO: Run database migrations
+    # TODO: Load system labels
+
+    yield
+
+    # Shutdown
+    print("=" * 50)
+    print("My Personal Map API Shutting down...")
+    print("=" * 50)
+    # TODO: Close database connections
+    # TODO: Cleanup resources
+
+
 # Initialize FastAPI app
 app = FastAPI(
     title="My Personal Map API",
     description="API REST per gestione segnaposti geografici personalizzati",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 # CORS Middleware
@@ -272,36 +301,6 @@ async def general_exception_handler(request, exc):
             }
         }
     )
-
-
-# ==================== Startup & Shutdown Events ====================
-
-@app.on_event("startup")
-async def startup_event():
-    """
-    Execute on application startup
-    """
-    print("=" * 50)
-    print("My Personal Map API Starting...")
-    print(f"Version: 1.0.0")
-    print(f"Environment: {os.getenv('ENVIRONMENT', 'development')}")
-    print(f"Debug Mode: {os.getenv('DEBUG', 'true')}")
-    print("=" * 50)
-    # TODO: Initialize database connection
-    # TODO: Run database migrations
-    # TODO: Load system labels
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """
-    Execute on application shutdown
-    """
-    print("=" * 50)
-    print("My Personal Map API Shutting down...")
-    print("=" * 50)
-    # TODO: Close database connections
-    # TODO: Cleanup resources
 
 
 # ==================== Main Entry Point ====================

@@ -259,12 +259,30 @@ Create test database: `CREATE DATABASE mypersonalmap_test;`
 
 ## Detailed Documentation
 
-Full documentation in `doc/`:
-- `architecture.md`: Complete architecture details
-- `database-design.md`: Full schema with all tables, indexes, stored procedures
-- `api-documentation.md`: All endpoints with examples
-- `setup-guide.md`: Complete setup instructions
-- `mapping-services-comparison.md`: Tech stack rationale
+Full documentation in `doc/` (organized by category):
+
+**Getting Started**:
+- `doc/01. Getting Started/01. Quick Start.md`: Quick setup (<10 min)
+- `doc/01. Getting Started/02. Setup Guide.md`: Complete setup instructions
+
+**Planning & Specs**:
+- `doc/02. Planning/01. Use Cases.md`: Functional requirements
+- `doc/02. Planning/02. Development Roadmap.md`: Implementation phases
+
+**Architecture**:
+- `doc/03. Architecture/01. Architecture.md`: Complete architecture details
+- `doc/03. Architecture/02. Tech Stack.md`: Technology stack and rationale
+- `doc/03. Architecture/03. Mapping Services Comparison.md`: Library comparisons
+
+**Implementation**:
+- `doc/04. Implementation/01. Database Design.md`: Full schema with tables, indexes, procedures
+- `doc/04. Implementation/02. API Documentation.md`: All endpoints with examples
+
+**Reference**:
+- `doc/05. Reference/01. Sources.md`: Bibliography and references
+- `doc/05. Reference/02. User Guide.md`: End-user manual
+
+**Index**: See `doc/00. Index.md` for navigation guide
 
 ## Roadmap Priority
 

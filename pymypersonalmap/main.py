@@ -30,9 +30,51 @@ async def lifespan(app: FastAPI):
     print(f"Environment: {os.getenv('ENVIRONMENT', 'development')}")
     print(f"Debug Mode: {os.getenv('DEBUG', 'true')}")
     print("=" * 50)
-    # TODO: Initialize database connection
-    # TODO: Run database migrations
-    # TODO: Load system labels
+
+    # Initialize database
+    try:
+        from pymypersonalmap.database.session import engine, init_db, SessionLocal
+        from pymypersonalmap.services import label_service
+        from sqlalchemy import inspect
+
+        # Check if tables exist
+        inspector = inspect(engine)
+        existing_tables = inspector.get_table_names()
+
+        if not existing_tables:
+            print("\n📊 Database tables not found. Initializing database...")
+            init_db()
+            print("✓ Database tables created successfully")
+
+            # Initialize system labels
+            print("\n🏷️  Initializing system labels...")
+            db = SessionLocal()
+            try:
+                label_service.initialize_system_labels(db)
+                print("✓ System labels initialized successfully")
+            except Exception as e:
+                print(f"⚠ Warning: Failed to initialize system labels: {e}")
+            finally:
+                db.close()
+        else:
+            print(f"\n✓ Database already initialized ({len(existing_tables)} tables found)")
+
+            # Ensure system labels are initialized even if tables exist
+            db = SessionLocal()
+            try:
+                label_service.initialize_system_labels(db)
+            except Exception as e:
+                print(f"⚠ Warning: Failed to check system labels: {e}")
+            finally:
+                db.close()
+
+        print("\n✓ Database initialization complete")
+        print("=" * 50)
+
+    except Exception as e:
+        print(f"\n❌ ERROR: Database initialization failed: {e}")
+        print("=" * 50)
+        raise
 
     yield
 
@@ -40,8 +82,6 @@ async def lifespan(app: FastAPI):
     print("=" * 50)
     print("My Personal Map API Shutting down...")
     print("=" * 50)
-    # TODO: Close database connections
-    # TODO: Cleanup resources
 
 
 # Initialize FastAPI app

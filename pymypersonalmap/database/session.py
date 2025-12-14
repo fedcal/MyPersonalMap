@@ -7,12 +7,12 @@ SQLAlchemy database session configuration and management.
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.pool import StaticPool
-from config.settings import settings
+from pymypersonalmap.config.settings import database_url, DB_ECHO
 
 # Create SQLAlchemy engine
 engine = create_engine(
-    settings.DATABASE_URL,
-    echo=settings.DB_ECHO,
+    database_url,
+    echo=DB_ECHO,
     pool_pre_ping=True,
     pool_recycle=3600,
 )
@@ -50,7 +50,7 @@ def init_db():
 
     Creates all tables defined in models.
     """
-    from models import marker, label, user  # Import all models
+    from pymypersonalmap.models import user, marker, labels, marker_label  # Import all models
     Base.metadata.create_all(bind=engine)
 
 

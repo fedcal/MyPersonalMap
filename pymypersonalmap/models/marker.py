@@ -37,7 +37,8 @@ class Marker(Base):
     )
 
     # JSON metadata for flexible additional data (hours, phone, website, etc.)
-    metadata = Column(
+    # Using 'marker_metadata' instead of 'metadata' (which is reserved in SQLAlchemy)
+    marker_metadata = Column(
         JSON,
         nullable=True
     )

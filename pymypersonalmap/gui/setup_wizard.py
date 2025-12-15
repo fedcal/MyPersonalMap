@@ -444,19 +444,35 @@ class DatabaseSetupWizard(ctk.CTkToplevel):
             )
             return
 
-        try:
+        # Validate password strength
+        if len(db_password) < 8:
             self.status_label.configure(
-                text="Creating database...",
+                text="❌ Database password must be at least 8 characters",
+                text_color=COLORS["error"]
+            )
+            return
+
+        try:
+            # Step 1: Test root credentials
+            self.status_label.configure(
+                text="🔍 Testing root credentials...",
                 text_color=COLORS["info"]
             )
             self.update()
 
-            # Connect as root
             connection = pymysql.connect(
                 host="localhost",
                 user="root",
                 password=root_password,
+                connect_timeout=5
             )
+
+            # Step 2: Create database and user
+            self.status_label.configure(
+                text="📦 Creating database...",
+                text_color=COLORS["info"]
+            )
+            self.update()
 
             with connection.cursor() as cursor:
                 # Create database
@@ -473,24 +489,64 @@ class DatabaseSetupWizard(ctk.CTkToplevel):
 
             connection.close()
 
-            # Update .env file
+            # Step 3: Validate new user can connect
+            self.status_label.configure(
+                text="✅ Testing new user credentials...",
+                text_color=COLORS["info"]
+            )
+            self.update()
+
+            test_connection = pymysql.connect(
+                host="localhost",
+                user=db_user,
+                password=db_password,
+                database=db_name,
+                connect_timeout=5
+            )
+
+            # Test query
+            with test_connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+                cursor.fetchone()
+
+            test_connection.close()
+
+            # Step 4: Update .env file
+            self.status_label.configure(
+                text="💾 Saving configuration...",
+                text_color=COLORS["info"]
+            )
+            self.update()
+
             self._update_env_file(db_name, db_user, db_password)
 
             self.db_configured = True
             self.show_success()
 
         except pymysql.err.OperationalError as e:
+            error_code = e.args[0] if e.args else 0
+
+            if error_code == 1045:
+                error_msg = "❌ Invalid root password"
+            elif error_code == 2003:
+                error_msg = "❌ Cannot connect to MySQL server. Is it running?"
+            elif error_code == 1396:
+                error_msg = f"❌ User '{db_user}' already exists with different credentials"
+            else:
+                error_msg = f"❌ Connection failed: {str(e)}"
+
             self.status_label.configure(
-                text=f"❌ Connection failed: {str(e)}",
+                text=error_msg,
                 text_color=COLORS["error"]
             )
             logger.error(f"MySQL setup failed: {e}")
+
         except Exception as e:
             self.status_label.configure(
-                text=f"❌ Error: {str(e)}",
+                text=f"❌ Unexpected error: {str(e)}",
                 text_color=COLORS["error"]
             )
-            logger.error(f"Unexpected error during MySQL setup: {e}")
+            logger.error(f"Unexpected error during MySQL setup: {e}", exc_info=True)
 
     def setup_sqlite(self):
         """Setup SQLite as fallback"""

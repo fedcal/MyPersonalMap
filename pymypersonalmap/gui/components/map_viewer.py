@@ -9,8 +9,13 @@ import customtkinter as ctk
 from tkinterweb import HtmlFrame
 import folium
 import tempfile
+import logging
 from pathlib import Path
 from typing import List, Tuple, Optional
+from pymypersonalmap.gui.error_handler import ErrorHandler
+
+
+logger = logging.getLogger(__name__)
 
 
 class MapViewer(ctk.CTkFrame):

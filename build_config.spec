@@ -45,6 +45,9 @@ a = Analysis(
         'sphinx',
         'setuptools',
         'pip',
+        'scipy',  # Non usata
+        'statsmodels',  # Non usata
+        'sympy',  # Non usata
 
         # Test modules
         'tkinter.test',
@@ -60,6 +63,38 @@ a = Analysis(
         '.pytest_cache',
         '.mypy_cache',
         'node_modules',
+
+        # GDAL drivers non usati (ottimizzazione build size)
+        'osgeo.gdal_HDF4',
+        'osgeo.gdal_HDF5',
+        'osgeo.gdal_netCDF',
+        'osgeo.gdal_GRIB',
+        'osgeo.gdal_MEM',
+        'osgeo.gdal_WCS',
+        'osgeo.gdal_WMS',
+
+        # Pandas components non usati
+        'pandas.tests',
+        'pandas.io.clipboard',
+        'pandas.io.html',
+        'pandas.io.sql',
+        'pandas.io.excel',
+        'pandas.plotting._matplotlib',
+
+        # NumPy optimization
+        'numpy.tests',
+        'numpy.distutils',
+        'numpy.f2py',
+
+        # Unused web frameworks
+        'flask',
+        'django',
+        'tornado',
+        'aiohttp',
+
+        # Unused documentation
+        'pydoc',
+        'doctest',
     ],
     hiddenimports=[
         # CustomTkinter
@@ -148,7 +183,7 @@ exe = EXE(
     name='MyPersonalMap',
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
+    strip=True,  # Strip debug symbols to reduce size
     upx=True,  # UPX compression
     console=False,  # No console window
     disable_windowed_traceback=False,
@@ -165,9 +200,15 @@ coll = COLLECT(
     a.binaries,
     a.zipfiles,
     a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
+    strip=True,  # Strip debug symbols from binaries
+    upx=True,  # UPX compression
+    upx_exclude=[
+        # Exclude problematic libraries from UPX compression
+        'vcruntime*.dll',
+        'python*.dll',
+        'libgdal*.so*',
+        'libproj*.so*',
+    ],
     name='MyPersonalMap',
 )
 

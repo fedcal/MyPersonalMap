@@ -6,7 +6,6 @@ SQLAlchemy database session configuration and management.
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy.pool import StaticPool
 from pymypersonalmap.config.settings import database_url, DB_ECHO
 
 # Create SQLAlchemy engine

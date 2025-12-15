@@ -124,6 +124,15 @@ GEOCODING_USER_AGENT=MyPersonalMap/1.0
 """
         self.config_file.write_text(default_env)
 
+    def get_env_path(self) -> Path:
+        """
+        Get path to .env configuration file
+
+        Returns:
+            Path to .env file
+        """
+        return self.config_file
+
     def get_logs_dir(self) -> Path:
         """
         Get directory for application logs

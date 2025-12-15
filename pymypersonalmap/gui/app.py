@@ -15,6 +15,7 @@ from pymypersonalmap.gui.layouts.main_layout import MainLayout
 from pymypersonalmap.gui.backend_manager import BackendManager
 from pymypersonalmap.gui.setup_wizard import DatabaseSetupWizard
 from pymypersonalmap.gui.config_manager import ConfigManager
+from pymypersonalmap.gui.splash import SplashScreenDark
 
 
 # Configure logging
@@ -55,15 +56,27 @@ class MyPersonalMapApp(ctk.CTk):
         # Initialize theme
         init_theme(mode="dark")
 
+        # Show splash screen
+        self.splash = SplashScreenDark()
+        self.splash.update_message("Inizializzazione...")
+        self.splash.update_progress(0.1)
+
+        # Hide main window during startup
+        self.withdraw()
+
         # Config manager
         self.config_mgr = ConfigManager()
+        self.splash.set_progress_with_message(0.2, "Caricamento configurazione...")
 
         # Backend manager (will be started after DB setup)
         self.backend = BackendManager(host="127.0.0.1", port=8000)
+        self.splash.set_progress_with_message(0.3, "Verifica database...")
 
         # Check database setup
         if not self.check_database_configured():
             logger.info("Database not configured, showing setup wizard")
+            self.splash.close()
+            self.deiconify()  # Show main window
             self.show_setup_wizard()
         else:
             logger.info("Database already configured")
@@ -127,33 +140,66 @@ class MyPersonalMapApp(ctk.CTk):
     def on_wizard_complete(self):
         """Callback when setup wizard completes"""
         logger.info("Setup wizard completed successfully")
+
+        # Show splash again after wizard
+        self.withdraw()
+        self.splash = SplashScreenDark()
+        self.splash.set_progress_with_message(0.3, "Setup completato, avvio applicazione...")
+
         self.start_application()
 
     def start_application(self):
         """Start the application (backend + GUI)"""
         try:
+            # Update splash
+            if hasattr(self, 'splash') and self.splash.winfo_exists():
+                self.splash.set_progress_with_message(0.4, "Avvio backend server...")
+
             # Start backend
             logger.info("Starting backend server...")
             self.backend.start()
             logger.info("Backend started successfully")
 
+            # Update splash
+            if hasattr(self, 'splash') and self.splash.winfo_exists():
+                self.splash.set_progress_with_message(0.6, "Inizializzazione database...")
+
             # Initialize database tables if needed
             self.initialize_database()
+
+            # Update splash
+            if hasattr(self, 'splash') and self.splash.winfo_exists():
+                self.splash.set_progress_with_message(0.8, "Caricamento interfaccia...")
 
             # Load main layout
             self.main_layout = MainLayout(self)
             self.main_layout.pack(fill="both", expand=True)
 
+            # Update splash
+            if hasattr(self, 'splash') and self.splash.winfo_exists():
+                self.splash.set_progress_with_message(1.0, "Completato!")
+
+            # Show main window and close splash
+            self.deiconify()
+            if hasattr(self, 'splash') and self.splash.winfo_exists():
+                self.after(500, self.splash.close)  # Close splash after 500ms
+
             logger.info("Application started successfully")
 
         except TimeoutError as e:
             logger.error(f"Backend failed to start: {e}")
+            if hasattr(self, 'splash') and self.splash.winfo_exists():
+                self.splash.close()
+            self.deiconify()
             self.show_error_and_exit(
                 f"Failed to start backend server:\n{str(e)}\n\n"
                 "Please check if port 8000 is available."
             )
         except Exception as e:
             logger.error(f"Application startup failed: {e}", exc_info=True)
+            if hasattr(self, 'splash') and self.splash.winfo_exists():
+                self.splash.close()
+            self.deiconify()
             self.show_error_and_exit(
                 f"Application failed to start:\n{str(e)}\n\n"
                 "Check logs for details."

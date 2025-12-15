@@ -118,3 +118,4 @@ exports/
 user_data/
 
 .env.example
+.criticality_state.json

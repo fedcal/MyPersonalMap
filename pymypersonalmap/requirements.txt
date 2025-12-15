@@ -39,6 +39,7 @@ lxml==5.1.0
 # GUI (Desktop)
 customtkinter==5.2.1
 pillow==10.2.0
+tkinterweb==3.24.8
 
 # Testing
 pytest==7.4.4
@@ -49,3 +50,6 @@ httpx==0.26.0
 black==24.1.1
 flake8==7.0.0
 mypy==1.8.0
+
+# Build & Packaging
+pyinstaller==6.3.0

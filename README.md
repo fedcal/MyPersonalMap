@@ -232,25 +232,36 @@ Gli eseguibili saranno disponibili nella directory `dist/`.
 
 ```
 myPersonalMap/
-├── pymypersonalmap/
+├── docs/                    # 📚 Documentazione completa
+│   ├── development/         # Docs per sviluppatori
+│   ├── guides/              # Guide utente e tutorial
+│   └── planning/            # Roadmap e pianificazione
+├── scripts/                 # 🔧 Script di build e utility
+│   ├── build/               # Script build (Linux, macOS, Windows)
+│   └── utils/               # Tool di sviluppo
+├── pymypersonalmap/         # 🎯 Pacchetto principale
+│   ├── api/                 # REST API (FastAPI)
+│   ├── config/              # Configurazione
+│   ├── database/            # Gestione database
 │   ├── gui/                 # GUI Desktop (CustomTkinter)
-│   │   ├── components/      # Componenti UI
+│   │   ├── components/      # Componenti UI riutilizzabili
 │   │   ├── layouts/         # Layout principali
-│   │   ├── themes/          # Temi e stili
-│   │   ├── app.py          # Entry point
-│   │   ├── backend_manager.py
-│   │   ├── setup_wizard.py
-│   │   └── config_manager.py
-│   ├── models/             # SQLAlchemy models
-│   ├── services/           # Business logic
-│   ├── database/           # Database session
-│   ├── config/             # Configuration
-│   └── main.py            # FastAPI app
-├── scripts/               # Build scripts
-├── build_config.spec      # PyInstaller config
-├── pyproject.toml         # Package config
-└── README.md
+│   │   └── themes/          # Temi e stili
+│   ├── models/              # SQLAlchemy ORM models
+│   ├── repository/          # Data access layer
+│   ├── services/            # Business logic
+│   ├── tests/               # Test suite
+│   │   ├── unit/            # Test unitari
+│   │   └── integration/     # Test integrazione
+│   ├── utils/               # Utility functions
+│   └── main.py              # Entry point applicazione
+├── build_config.spec        # Configurazione PyInstaller
+├── pyproject.toml           # Configurazione progetto Python
+├── STRUCTURE.md             # 📋 Documentazione struttura dettagliata
+└── README.md                # Questo file
 ```
+
+**Per la documentazione completa della struttura**, vedi [STRUCTURE.md](STRUCTURE.md)
 
 ---
 

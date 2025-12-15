@@ -1,11 +1,8 @@
 {
   "permissions": {
     "allow": [
-      // === Operazioni Git ===
       "Bash(git:*)",
       "Bash(gh:*)",
-
-      // === Python & Dependency Management ===
       "Bash(pip:*)",
       "Bash(pip3:*)",
       "Bash(python:*)",
@@ -15,12 +12,8 @@
       "Bash(source ../venv/bin/activate)",
       "Bash(python -c:*)",
       "Bash(python -m:*)",
-
-      // === Database Operations ===
       "Bash(mysql:*)",
       "Bash(alembic:*)",
-
-      // === File System Operations ===
       "Bash(chmod:*)",
       "Bash(chown:*)",
       "Bash(find:*)",
@@ -38,51 +31,32 @@
       "Bash(echo:*)",
       "Bash(sed:*)",
       "Bash(awk:*)",
-
-      // === Navigation ===
       "Bash(cd:*)",
       "Bash(pwd)",
-
-      // === Testing ===
       "Bash(pytest:*)",
       "Bash(pytest-cov:*)",
-
-      // === Development Servers ===
       "Bash(uvicorn:*)",
       "Bash(fastapi:*)",
-
-      // === Code Quality ===
       "Bash(black:*)",
       "Bash(flake8:*)",
       "Bash(mypy:*)",
-
-      // === Process Management ===
       "Bash(ps:*)",
       "Bash(kill:*)",
       "Bash(pkill:*)",
-
-      // === System Info ===
       "Bash(df:*)",
       "Bash(du:*)",
       "Bash(free:*)",
-
-      // === File Operations - Auto-approve ===
       "Write(*)",
       "Edit(*)",
       "Read(*)",
       "Glob(*)",
       "Grep(*)",
       "NotebookEdit(*)",
-
-      // === Git Operations ===
       "Bash(git add:*)",
       "Bash(git commit:*)",
-
-      // === Web ===
       "WebSearch"
     ],
     "deny": [
-      // Operazioni pericolose - Sempre negate
       "Bash(rm -rf /)",
       "Bash(dd:*)",
       "Bash(mkfs:*)",
@@ -91,7 +65,6 @@
       "Bash(sudo rm:*)"
     ],
     "ask": [
-      // Operazioni che richiedono conferma
       "Bash(rm *)",
       "Bash(rm -r*)",
       "Bash(rm -f*)",
@@ -113,7 +86,7 @@
     },
     "tech_stack": {
       "backend": "FastAPI + SQLAlchemy + MySQL",
-      "geospatial": "GeoPandas + Shapely + Folium + GeoPy",
+      "geospatial": "GeoPandas + Shapely + Folium + GeoPy + GeoAlchemy2",
       "gui": "CustomTkinter",
       "testing": "pytest",
       "database": "MySQL 8.0+ with spatial types"
@@ -147,7 +120,7 @@
   },
 
   "environment": {
-    "PYTHONPATH": "${PROJECT_ROOT}/pymypersonalmap",
+    "PYTHONPATH": "${PROJECT_ROOT}",
     "VIRTUAL_ENV": "${PROJECT_ROOT}/venv",
     "DATABASE_URL": "mysql+pymysql://mypersonalmap_user:password@localhost:3306/mypersonalmap"
   },
@@ -156,43 +129,35 @@
     "description": "Configurazione contesto file per Claude Code - My Personal Map",
     "ignore_file": ".claudeignore",
     "priority_files": [
-      // === Documentazione Principale (Max Priority) ===
       "CLAUDE.md",
       "README.md",
-
-      // === Claude Configuration ===
+      "CRITICITA.md",
       ".claude/**/*",
-
-      // === Documentazione Tecnica ===
-      "doc/architecture.md",
-      "doc/database-design.md",
-      "doc/api-documentation.md",
-      "doc/tech-stack.md",
-      "doc/mapping-services-comparison.md",
-
-      // === Configurazione Progetto ===
+      "doc/00. Index.md",
+      "doc/01. Getting Started/01. Quick Start.md",
+      "doc/01. Getting Started/02. Setup Guide.md",
+      "doc/02. Planning/01. Use Cases.md",
+      "doc/02. Planning/02. Development Roadmap.md",
+      "doc/03. Architecture/01. Architecture.md",
+      "doc/03. Architecture/02. Tech Stack.md",
+      "doc/04. Implementation/01. Database Design.md",
+      "doc/04. Implementation/02. API Documentation.md",
       ".env.example",
       "pymypersonalmap/requirements.txt",
       "pymypersonalmap/config/settings.py",
       "alembic.ini",
-
-      // === Entry Points ===
       "pymypersonalmap/main.py",
       "pymypersonalmap/database/session.py"
     ],
     "source_patterns": [
-      // === Backend Source ===
       "pymypersonalmap/**/*.py",
       "pymypersonalmap/api/routes/*.py",
       "pymypersonalmap/services/*.py",
       "pymypersonalmap/models/*.py",
+      "pymypersonalmap/repository/*.py",
       "pymypersonalmap/database/*.py",
       "pymypersonalmap/config/*.py",
-
-      // === Tests ===
       "pymypersonalmap/tests/**/*.py",
-
-      // === Migrations ===
       "alembic/versions/*.py"
     ],
     "conditional_access": [
@@ -286,8 +251,8 @@
       "command": "mypy pymypersonalmap/"
     },
     "server": {
-      "dev_command": "uvicorn main:app --reload --host 0.0.0.0 --port 8000",
-      "prod_command": "uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4"
+      "dev_command": "PYTHONPATH=/media/federicocalo/D/prj/myPersonalMap uvicorn pymypersonalmap.main:app --reload --host 0.0.0.0 --port 8000",
+      "prod_command": "PYTHONPATH=/media/federicocalo/D/prj/myPersonalMap uvicorn pymypersonalmap.main:app --host 0.0.0.0 --port 8000 --workers 4"
     }
   },
 

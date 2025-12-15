@@ -1,0 +1,137 @@
+{
+  "CTk": {
+    "fg_color": ["#F9FAFB", "#0F172A"]
+  },
+  "CTkToplevel": {
+    "fg_color": ["#F9FAFB", "#0F172A"]
+  },
+  "CTkFrame": {
+    "corner_radius": 6,
+    "border_width": 1,
+    "fg_color": ["#FFFFFF", "#1E293B"],
+    "top_fg_color": ["#F3F4F6", "#1E293B"],
+    "border_color": ["#E5E7EB", "#334155"]
+  },
+  "CTkButton": {
+    "corner_radius": 6,
+    "border_width": 0,
+    "fg_color": ["#4F46E5", "#4F46E5"],
+    "hover_color": ["#3730A3", "#3730A3"],
+    "border_color": ["#4F46E5", "#4F46E5"],
+    "text_color": ["#FFFFFF", "#FFFFFF"],
+    "text_color_disabled": ["#9CA3AF", "#64748B"]
+  },
+  "CTkLabel": {
+    "corner_radius": 0,
+    "fg_color": ["transparent", "transparent"],
+    "text_color": ["#374151", "#CBD5E1"]
+  },
+  "CTkEntry": {
+    "corner_radius": 6,
+    "border_width": 1,
+    "fg_color": ["#FFFFFF", "#1E293B"],
+    "border_color": ["#D1D5DB", "#475569"],
+    "text_color": ["#374151", "#CBD5E1"],
+    "placeholder_text_color": ["#9CA3AF", "#64748B"]
+  },
+  "CTkCheckBox": {
+    "corner_radius": 4,
+    "border_width": 2,
+    "fg_color": ["#4F46E5", "#4F46E5"],
+    "border_color": ["#D1D5DB", "#475569"],
+    "hover_color": ["#3730A3", "#3730A3"],
+    "checkmark_color": ["#FFFFFF", "#FFFFFF"],
+    "text_color": ["#374151", "#CBD5E1"],
+    "text_color_disabled": ["#9CA3AF", "#64748B"]
+  },
+  "CTkSwitch": {
+    "corner_radius": 1000,
+    "border_width": 2,
+    "button_length": 0,
+    "fg_color": ["#D1D5DB", "#475569"],
+    "progress_color": ["#4F46E5", "#4F46E5"],
+    "button_color": ["#FFFFFF", "#1E293B"],
+    "button_hover_color": ["#F9FAFB", "#0F172A"],
+    "text_color": ["#374151", "#CBD5E1"],
+    "text_color_disabled": ["#9CA3AF", "#64748B"]
+  },
+  "CTkRadioButton": {
+    "corner_radius": 1000,
+    "border_width_checked": 6,
+    "border_width_unchecked": 2,
+    "fg_color": ["#4F46E5", "#4F46E5"],
+    "border_color": ["#D1D5DB", "#475569"],
+    "hover_color": ["#3730A3", "#3730A3"],
+    "text_color": ["#374151", "#CBD5E1"],
+    "text_color_disabled": ["#9CA3AF", "#64748B"]
+  },
+  "CTkProgressBar": {
+    "corner_radius": 1000,
+    "border_width": 0,
+    "fg_color": ["#E5E7EB", "#334155"],
+    "progress_color": ["#4F46E5", "#4F46E5"],
+    "border_color": ["#9CA3AF", "#64748B"]
+  },
+  "CTkSlider": {
+    "corner_radius": 1000,
+    "button_corner_radius": 1000,
+    "border_width": 4,
+    "button_length": 0,
+    "fg_color": ["#D1D5DB", "#475569"],
+    "progress_color": ["#4F46E5", "#4F46E5"],
+    "button_color": ["#4F46E5", "#4F46E5"],
+    "button_hover_color": ["#3730A3", "#3730A3"]
+  },
+  "CTkScrollbar": {
+    "corner_radius": 1000,
+    "border_spacing": 4,
+    "fg_color": ["transparent", "transparent"],
+    "button_color": ["#D1D5DB", "#475569"],
+    "button_hover_color": ["#9CA3AF", "#64748B"]
+  },
+  "CTkSegmentedButton": {
+    "corner_radius": 6,
+    "border_width": 0,
+    "fg_color": ["#E5E7EB", "#334155"],
+    "selected_color": ["#4F46E5", "#4F46E5"],
+    "selected_hover_color": ["#3730A3", "#3730A3"],
+    "unselected_color": ["#E5E7EB", "#334155"],
+    "unselected_hover_color": ["#D1D5DB", "#475569"],
+    "text_color": ["#374151", "#CBD5E1"],
+    "text_color_disabled": ["#9CA3AF", "#64748B"]
+  },
+  "CTkTextbox": {
+    "corner_radius": 6,
+    "border_width": 1,
+    "fg_color": ["#FFFFFF", "#1E293B"],
+    "border_color": ["#D1D5DB", "#475569"],
+    "text_color": ["#374151", "#CBD5E1"],
+    "scrollbar_button_color": ["#D1D5DB", "#475569"],
+    "scrollbar_button_hover_color": ["#9CA3AF", "#64748B"]
+  },
+  "CTkScrollableFrame": {
+    "label_fg_color": ["#F3F4F6", "#1E293B"]
+  },
+  "DropdownMenu": {
+    "fg_color": ["#FFFFFF", "#1E293B"],
+    "hover_color": ["#E5E7EB", "#334155"],
+    "text_color": ["#374151", "#CBD5E1"]
+  },
+  "CTkFont": {
+    "macOS": {
+      "family": "SF Display",
+      "size": 13,
+      "weight": "normal"
+    },
+    "Windows": {
+      "family": "Roboto",
+      "size": 13,
+      "weight": "normal"
+    },
+    "Linux": {
+      "family": "Roboto",
+      "size": 13,
+      "weight": "normal"
+    }
+  }
+}

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-My Personal Map è un'applicazione Python per gestire mappe personali con segnaposti geografici. Utilizza FastAPI per il backend REST, MySQL per la persistenza con supporto spatial data types, e una GUI desktop con CustomTkinter.
+My Personal Map è un'applicazione desktop cross-platform per gestire mappe personali con segnaposti geografici. Utilizza FastAPI per il backend REST (embedded), MySQL per la persistenza con supporto spatial data types, e una GUI desktop con CustomTkinter. L'applicazione è distribuibile come eseguibile standalone per Windows, macOS e Linux.
 
 ## Development Setup
 
@@ -34,6 +34,17 @@ cp .env.example .env
 ```
 
 ### Running the Application
+
+**Desktop GUI** (recommended):
+```bash
+# Run GUI application (starts backend automatically)
+python pymypersonalmap/gui/app.py
+
+# Or with package installed
+mypersonalmap
+```
+
+**Backend only** (for development/testing):
 ```bash
 # Development server (auto-reload enabled)
 cd pymypersonalmap
@@ -41,9 +52,6 @@ python main.py
 
 # Or with uvicorn directly
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
-
-# Production mode
-uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
 ### Testing
@@ -81,7 +89,8 @@ Il progetto segue un'architettura a livelli con separazione chiara delle respons
 
 1. **Presentation Layer** (`gui/`)
    - Desktop GUI con CustomTkinter
-   - Map viewer con Folium/Leaflet embedded
+   - Map viewer con Folium embedded in WebView (tkinterweb)
+   - Backend FastAPI runs in background thread
 
 2. **API Layer** (`main.py`, `api/routes/`)
    - FastAPI REST endpoints
@@ -190,9 +199,14 @@ WHERE ST_Distance_Sphere(
 - Folium 0.15.1 (mappe interattive)
 - GPXPy 1.6.1 (tracciati GPS)
 
-**GUI**: CustomTkinter 5.2.1
+**GUI**:
+- CustomTkinter 5.2.1 (desktop framework)
+- tkinterweb 3.24.8 (HTML rendering for maps)
+- Pillow 10.2.0 (image handling)
 
 **Security**: PyJWT 2.8.0, passlib[bcrypt] 1.7.4
+
+**Build**: PyInstaller 6.3.0 (executable packaging)
 
 **Testing**: pytest 7.4.4, httpx 0.26.0
 
@@ -219,7 +233,10 @@ Le query geografiche devono usare `ST_Distance_Sphere()` per sfruttare indici sp
 - **CSV**: Richiede mapping colonne lat/lon
 
 ### GUI Integration
-Folium genera HTML embedded in GUI via WebView. Comunicazione bidirezionale tramite JavaScript callbacks.
+- Folium genera HTML embedded in CustomTkinter GUI via tkinterweb.HtmlFrame
+- Backend FastAPI gira in thread daemon separato
+- GUI comunica con backend via HTTP localhost:8000
+- Mappa interattiva con markers, layers, e controlli Leaflet
 
 ## API Documentation
 
@@ -286,19 +303,27 @@ Full documentation in `doc/` (organized by category):
 
 ## Roadmap Priority
 
-**MVP (Current Phase)**:
-- [ ] Implement SQLAlchemy models (markers, labels, users)
-- [ ] Create database migrations with Alembic
-- [ ] Implement service layer (MarkerService, GeocodingService)
-- [ ] Complete API endpoints with database integration
-- [ ] Add authentication (JWT)
+**Phase 1 - Backend & Database** (Completato):
+- [x] Implement SQLAlchemy models (markers, labels, users)
+- [x] Create database migrations with Alembic
+- [x] Implement service layer (MarkerService, GeocodingService)
+- [x] FastAPI endpoints structure
 
-**Phase 2**:
-- [ ] Desktop GUI implementation
+**Phase 2 - Desktop GUI** (In Corso):
+- [ ] Implement CustomTkinter GUI components
+- [ ] Backend manager (FastAPI in thread)
+- [ ] Database setup wizard
+- [ ] Map viewer with Folium
+- [ ] Complete API integration in GUI
+
+**Phase 3 - Packaging**:
+- [ ] PyInstaller configuration
+- [ ] Build scripts (Windows, macOS, Linux)
+- [ ] Cross-platform testing
+- [ ] Installer creation
+
+**Phase 4 - Advanced Features**:
 - [ ] Import/Export functionality (GPX, KML)
 - [ ] Route planning algorithms
-
-**Phase 3**:
 - [ ] Statistics dashboard
 - [ ] Web scraping integration
-- [ ] Sharing functionality

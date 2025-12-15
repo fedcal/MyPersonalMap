@@ -4,132 +4,15 @@ __pycache__/
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
 # Virtual Environment
 venv/
-ENV/
 env/
-.venv
-
-# PyInstaller
-*.manifest
-*.spec
-
-# Unit test / coverage
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
-
-# Translations
-*.mo
-*.pot
-
-# Django/Flask
-instance/
-.webassets-cache
-
-# Scrapy
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-.pybuilder/
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-.python-version
-
-# pipenv
-Pipfile.lock
-
-# poetry
-poetry.lock
-
-# pdm
-.pdm.toml
-
-# PEP 582
-__pypackages__/
-
-# Celery
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath
-*.sage.py
-
-# Environments
-.env
-.env.local
-.env.*.local
-.venv
-env/
-venv/
 ENV/
 env.bak/
 venv.bak/
 
-# Spyder
-.spyderproject
-.spyproject
-
-# Rope
-.ropeproject
-
-# mkdocs
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre
-.pyre/
-
-# pytype
-.pytype/
-
-# Cython
-cython_debug/
-
-# IDEs
+# IDE
 .vscode/
 .idea/
 *.swp
@@ -137,42 +20,101 @@ cython_debug/
 *~
 .DS_Store
 
+# Environment variables
+# IMPORTANTE: NON ignorare pymypersonalmap/.env (usato in development)
+# Solo il .env.example nella root è versionato
+.env
+.env.local
+.env.*.local
+
 # Database
 *.db
 *.sqlite
 *.sqlite3
-*.sql
-*.dump
 
 # Logs
 *.log
 logs/
 *.log.*
 
-# OS
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-*.lnk
+# Build & Distribution
+build/
+dist/
+*.egg-info/
+*.egg
+MANIFEST
+*.spec.bak
 
-# Project Specific
-uploads/
-exports/
-backups/
+# PyInstaller
+*.manifest
+*.spec~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+*.cover
+
+# Documentation builds
+doc/_build/
+doc/.doctrees/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Cache directories
 .cache/
-temp/
+*.cache
+cache/
+
+# OS specific
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
 tmp/
+temp/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Compiled translations
+*.mo
+*.pot
 
 # Alembic
 alembic/versions/*.pyc
 
-# Local configuration (keep .env.example but ignore actual .env)
-.env
+# Node (se presente residuo frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
 
+# Package managers
+*.lock
+package-lock.json
+yarn.lock
 
+# Certificates e chiavi
+*.pem
+*.key
+*.cert
+*.crt
+
+# Exports e dati utente
+exports/
+user_data/
+
+.env.example

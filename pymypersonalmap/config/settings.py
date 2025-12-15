@@ -5,11 +5,30 @@ Configurazioni caricate da pymypersonalmap/.env tramite python-dotenv
 """
 
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Carica le variabili dal file .env
-env_path = Path(__file__).parent.parent / '.env'
+# Determina il path del .env in base all'ambiente (development vs standalone)
+if getattr(sys, 'frozen', False):
+    # Eseguibile PyInstaller: usa config manager per user data directory
+    # Questo import viene fatto solo se frozen per evitare import circolari
+    try:
+        from pymypersonalmap.gui.config_manager import ConfigManager
+        config_mgr = ConfigManager()
+        env_path = config_mgr.init_config()
+    except ImportError:
+        # Fallback se config_manager non esiste ancora
+        env_path = Path.home() / '.mypersonalmap' / '.env'
+else:
+    # Development: usa SEMPRE .env nella directory pymypersonalmap
+    env_path = Path(__file__).parent.parent / '.env'
+    if not env_path.exists():
+        raise FileNotFoundError(
+            f"File .env non trovato in {env_path}\n"
+            "Crea il file pymypersonalmap/.env con le tue configurazioni."
+        )
+
 load_dotenv(dotenv_path=env_path)
 
 # ==================== DATABASE ====================

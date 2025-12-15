@@ -1,0 +1,116 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mypersonalmap"
+version = "1.0.0"
+description = "Desktop application for managing personal geographic markers"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Federico Calo", email = "your.email@example.com"}
+]
+keywords = ["gis", "maps", "markers", "geospatial", "desktop"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: GIS",
+]
+
+dependencies = [
+    # Web Framework
+    "fastapi==0.109.0",
+    "uvicorn[standard]==0.27.0",
+    "python-multipart==0.0.6",
+
+    # Database
+    "sqlalchemy==2.0.25",
+    "pymysql==1.1.0",
+    "alembic==1.13.1",
+
+    # Geospatial
+    "geoalchemy2==0.14.3",
+    "geopandas==0.14.2",
+    "shapely==2.0.2",
+    "fiona==1.9.5",
+    "geopy==2.4.1",
+    "folium==0.15.1",
+    "gpxpy==1.6.1",
+
+    # GUI
+    "customtkinter==5.2.1",
+    "pillow==10.2.0",
+    "tkinterweb==3.24.8",
+
+    # Security
+    "pyjwt==2.8.0",
+    "passlib[bcrypt]==1.7.4",
+
+    # Configuration
+    "python-dotenv==1.0.0",
+    "pydantic==2.5.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==7.4.4",
+    "pytest-cov==4.1.0",
+    "httpx==0.26.0",
+    "black==24.1.1",
+    "flake8==7.0.0",
+    "mypy==1.8.0",
+]
+build = [
+    "pyinstaller==6.3.0",
+]
+
+[project.scripts]
+mypersonalmap = "pymypersonalmap.gui.app:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/mypersonalmap"
+Documentation = "https://github.com/yourusername/mypersonalmap/blob/main/README.md"
+Repository = "https://github.com/yourusername/mypersonalmap"
+Issues = "https://github.com/yourusername/mypersonalmap/issues"
+
+[tool.setuptools]
+packages = ["pymypersonalmap"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --cov=pymypersonalmap --cov-report=term-missing"
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | venv
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+
+[tool.flake8]
+max-line-length = 100
+exclude = [".git", "__pycache__", "venv", "build", "dist"]
+ignore = ["E203", "W503"]

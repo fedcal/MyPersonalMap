@@ -8,6 +8,7 @@ This is the core component for displaying geographic markers.
 import customtkinter as ctk
 from tkinterweb import HtmlFrame
 import folium
+from folium import plugins as folium_plugins
 import tempfile
 import logging
 from pathlib import Path
@@ -82,7 +83,7 @@ class MapViewer(ctk.CTkFrame):
         )
 
         # Add fullscreen control
-        folium.plugins.Fullscreen(
+        folium_plugins.Fullscreen(
             position="topleft",
             title="Fullscreen",
             title_cancel="Exit fullscreen",

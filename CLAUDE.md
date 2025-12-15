@@ -20,38 +20,80 @@ pip install -r pymypersonalmap/requirements.txt
 ```
 
 ### Database Setup
-```bash
-# Create MySQL database
-mysql -u root -p
-CREATE DATABASE mypersonalmap;
-CREATE USER 'mypersonalmap_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON mypersonalmap.* TO 'mypersonalmap_user'@'localhost';
-FLUSH PRIVILEGES;
 
-# Configure .env file
+**Default: SQLite (Embedded)** - Recommended for Production
+```bash
+# Configure .env file for SQLite (default)
 cp .env.example .env
-# Edit .env with your database credentials and SECRET_KEY
+# Set DATABASE_TYPE=spatialite in .env (already configured)
+
+# Database will be automatically created at:
+# - Development: pymypersonalmap/mypersonalmap.db
+# - Production: ~/.mypersonalmap/mypersonalmap.db
 ```
+
+**Optional: MySQL for Development**
+```bash
+# Start MySQL container (optional)
+docker run -d --name mysql-db-root \
+  -e MYSQL_ROOT_PASSWORD=password \
+  -p 3306:3306 mysql:8.0
+
+# Create database and user
+docker exec mysql-db-root mysql -u root -ppassword -e \
+  "CREATE DATABASE mypersonalmap; \
+   CREATE USER 'mypersonalmap_user'@'%' IDENTIFIED BY 'mypersonalmap_pass'; \
+   GRANT ALL PRIVILEGES ON mypersonalmap.* TO 'mypersonalmap_user'@'%'; \
+   FLUSH PRIVILEGES;"
+
+# Configure .env for MySQL
+# Set DATABASE_TYPE=mysql in .env
+```
+
+**Database Auto-Initialization**: The application automatically creates tables and initializes 10 system labels on first startup. No manual migration needed.
+
+**Key Changes**:
+- Now uses SQLite with lat/lon columns instead of spatial types
+- Zero external dependencies - works out of the box
+- Perfect for desktop distribution with PyInstaller
 
 ### Running the Application
 
-**Desktop GUI** (recommended):
+**IMPORTANT**: When running from project root, always set PYTHONPATH:
 ```bash
-# Run GUI application (starts backend automatically)
-python pymypersonalmap/gui/app.py
-
-# Or with package installed
-mypersonalmap
+export PYTHONPATH=/path/to/myPersonalMap  # Linux/macOS
+# or
+set PYTHONPATH=C:\path\to\myPersonalMap   # Windows
 ```
 
-**Backend only** (for development/testing):
+**Full Application (GUI + Backend)** - Recommended:
 ```bash
-# Development server (auto-reload enabled)
-cd pymypersonalmap
-python main.py
+# From project root (requires PYTHONPATH)
+PYTHONPATH=$(pwd) python3 pymypersonalmap/main.py
 
-# Or with uvicorn directly
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+# The application will:
+# 1. Show splash screen during initialization
+# 2. Start FastAPI backend in background thread (port 8000)
+# 3. Auto-initialize database if needed
+# 4. Display GUI with interactive map
+```
+
+**Backend Only** (for API development):
+```bash
+# Option 1: From project root with flag
+PYTHONPATH=$(pwd) python3 pymypersonalmap/main.py --backend-only
+
+# Option 2: From pymypersonalmap directory (no PYTHONPATH needed)
+cd pymypersonalmap && python3 main.py
+
+# Option 3: With uvicorn directly
+cd pymypersonalmap && uvicorn main:app --reload
+```
+
+**GUI Only** (alternative):
+```bash
+# Direct GUI launch (also starts backend automatically)
+PYTHONPATH=$(pwd) python3 pymypersonalmap/gui/app.py
 ```
 
 ### Testing
@@ -184,20 +226,22 @@ WHERE ST_Distance_Sphere(
 ) <= 5000;
 ```
 
-## Tech Stack (MVP)
+## Tech Stack
 
 **Backend**:
 - FastAPI 0.109.0 (REST API)
 - SQLAlchemy 2.0.25 (ORM)
-- Alembic 1.13.1 (migrations)
+- SQLite 3 (embedded database, zero-config)
 
-**Geospatial**:
-- GeoPandas 0.14.2 (data manipulation)
-- Shapely 2.0.2 (geometrie)
-- Fiona 1.9.5 (I/O file geospaziali)
-- GeoPy 2.4.1 (geocoding)
-- Folium 0.15.1 (mappe interattive)
-- GPXPy 1.6.1 (tracciati GPS)
+**Geographic Calculations**:
+- Pure Python Haversine formulas (no external dependencies)
+- GeoPy 2.4.1 (geocoding - optional)
+- Folium 0.15.1 (interactive maps)
+
+**Optional Geospatial** (for import/export only):
+- GeoPandas 0.14.2 (GPX/KML processing)
+- Shapely 2.0.2 (geometry handling)
+- GPXPy 1.6.1 (GPS tracks)
 
 **GUI**:
 - CustomTkinter 5.2.1 (desktop framework)
@@ -208,35 +252,109 @@ WHERE ST_Distance_Sphere(
 
 **Build**: PyInstaller 6.3.0 (executable packaging)
 
-**Testing**: pytest 7.4.4, httpx 0.26.0
+**Testing**: pytest 7.4.4, pytest-cov 7.0.0
 
 ## Important Implementation Notes
 
-### Coordinate Validation
-Sempre validare:
-- Latitude: -90 to +90
-- Longitude: -180 to +180
-- SRID 4326 (WGS84) per compatibilità GPS
+### Coordinate Storage
+**Important**: Coordinates are stored as separate `latitude` and `longitude` columns (REAL/Float type):
+- Latitude: -90 to +90 (always validate)
+- Longitude: -180 to +180 (always validate)
+- WGS84 (EPSG:4326) standard
 
-### Geocoding Rate Limits
-- Nominatim: 1 request/second (rispettare per evitare ban)
-- Implementare caching in `GeocodingService`
-- Fallback su provider multipli
+**Why separate columns?**:
+- Works with pure SQLite (no spatial extensions needed)
+- Perfect for desktop distribution
+- Simpler schema, easier to query
+- Indexes on (lat, lon) for bounding box queries
 
-### Spatial Index Usage
-Le query geografiche devono usare `ST_Distance_Sphere()` per sfruttare indici spaziali. Query con `LIKE` su coordinate sono inefficienti.
+### Geographic Calculations
+Use `pymypersonalmap.services.geo_utils` for:
+- **Distance**: Haversine formula (accuracy <0.5%)
+- **Bounding Box**: For area queries
+- **Bearing**: Direction between points
+- **Midpoint**: Center between coordinates
+
+Example:
+```python
+from pymypersonalmap.services.geo_utils import haversine_distance
+
+# Distance in km
+dist = haversine_distance(45.4642, 9.1900, 41.9028, 12.4964)
+# Returns: 477.58 km (Milan to Rome)
+```
+
+### Query Optimization
+For geographic queries use bounding box first, then distance:
+```python
+# 1. Get bounding box for 10km radius
+bbox = get_bounding_box(center_lat, center_lon, 10)
+min_lat, min_lon, max_lat, max_lon = bbox
+
+# 2. Query markers in bounding box (fast, uses index)
+markers = db.query(Marker).filter(
+    Marker.latitude.between(min_lat, max_lat),
+    Marker.longitude.between(min_lon, max_lon)
+).all()
+
+# 3. Calculate exact distance for each (accurate)
+for marker in markers:
+    dist = haversine_distance(
+        center_lat, center_lon,
+        marker.latitude, marker.longitude
+    )
+    if dist <= 10:  # Within radius
+        results.append(marker)
+```
 
 ### Import/Export Formats
 - **GPX**: Standard GPS, usa `gpxpy` library
 - **KML**: Google Earth, usa `fiona`
 - **GeoJSON**: Standard web, nativo in GeoPandas
-- **CSV**: Richiede mapping colonne lat/lon
+- **CSV**: Direct lat/lon mapping
 
 ### GUI Integration
 - Folium genera HTML embedded in CustomTkinter GUI via tkinterweb.HtmlFrame
-- Backend FastAPI gira in thread daemon separato
+- Backend FastAPI gira in thread daemon separato gestito da `BackendManager`
 - GUI comunica con backend via HTTP localhost:8000
 - Mappa interattiva con markers, layers, e controlli Leaflet
+
+### Common Bugs and Fixes
+
+**Bug: Folium plugins AttributeError**
+```python
+# WRONG
+import folium
+folium.plugins.Fullscreen()  # AttributeError: module 'folium' has no attribute 'plugins'
+
+# CORRECT
+from folium import plugins as folium_plugins
+folium_plugins.Fullscreen()
+```
+
+**Bug: Splash screen initialization order**
+```python
+# WRONG - _message used before initialization
+def __init__(self):
+    self._create_content()  # Uses self._message
+    self._message = "Loading..."  # Initialized too late
+
+# CORRECT - initialize before use
+def __init__(self):
+    self._message = "Loading..."  # Initialize first
+    self._create_content()  # Now can use self._message
+```
+
+**Bug: ModuleNotFoundError when running from project root**
+```bash
+# WRONG
+python3 pymypersonalmap/main.py  # Can't find 'pymypersonalmap' module
+
+# CORRECT
+PYTHONPATH=$(pwd) python3 pymypersonalmap/main.py
+# or
+cd pymypersonalmap && python3 main.py
+```
 
 ## API Documentation
 
@@ -303,27 +421,37 @@ Full documentation in `doc/` (organized by category):
 
 ## Roadmap Priority
 
-**Phase 1 - Backend & Database** (Completato):
+**Phase 1 - Backend & Database** (✅ Completato):
 - [x] Implement SQLAlchemy models (markers, labels, users)
 - [x] Create database migrations with Alembic
 - [x] Implement service layer (MarkerService, GeocodingService)
 - [x] FastAPI endpoints structure
+- [x] Auto-initialization database and system labels
+- [x] Docker setup support
 
-**Phase 2 - Desktop GUI** (In Corso):
-- [ ] Implement CustomTkinter GUI components
-- [ ] Backend manager (FastAPI in thread)
-- [ ] Database setup wizard
-- [ ] Map viewer with Folium
-- [ ] Complete API integration in GUI
+**Phase 2 - Desktop GUI** (✅ Completato):
+- [x] Implement CustomTkinter GUI components
+- [x] Backend manager (FastAPI in thread)
+- [x] Database setup wizard
+- [x] Map viewer with Folium
+- [x] Splash screen with progress tracking
+- [x] Error handling and logging
+- [x] Integrated startup (main.py starts GUI + Backend)
 
-**Phase 3 - Packaging**:
+**Phase 3 - Core Features** (🚧 In Corso):
+- [ ] Complete CRUD markers via GUI
+- [ ] Geocoding integration (address search)
+- [ ] Search and filter system
+- [ ] Statistics dashboard
+
+**Phase 4 - Packaging**:
 - [ ] PyInstaller configuration
 - [ ] Build scripts (Windows, macOS, Linux)
 - [ ] Cross-platform testing
 - [ ] Installer creation
 
-**Phase 4 - Advanced Features**:
+**Phase 5 - Advanced Features**:
 - [ ] Import/Export functionality (GPX, KML)
 - [ ] Route planning algorithms
-- [ ] Statistics dashboard
+- [ ] GPS tracks support
 - [ ] Web scraping integration

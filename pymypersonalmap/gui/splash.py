@@ -51,16 +51,16 @@ class SplashScreen(ctk.CTkToplevel):
         # Configure style
         self.configure(fg_color=COLORS["gray_50"])
 
+        # Initialize progress and message (before creating content)
+        self._progress = 0.0
+        self._message = "Inizializzazione..."
+
         # Create content
         self._create_content()
 
         # Bring to front
         self.lift()
         self.attributes("-topmost", True)
-
-        # Initialize progress
-        self._progress = 0.0
-        self._message = "Inizializzazione..."
 
     def _center_window(self):
         """Center window on screen"""

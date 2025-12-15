@@ -347,18 +347,39 @@ async def general_exception_handler(request, exc):
 
 if __name__ == "__main__":
     """
-    Run the application directly with uvicorn
+    Run the application with GUI (which starts FastAPI backend automatically)
 
     Usage:
-        python main.py
+        python main.py                    # Start GUI + Backend
+        python -m uvicorn main:app        # Start backend only
 
-    Or with uvicorn command:
-        uvicorn main:app --reload --host 0.0.0.0 --port 8000
+    The GUI application will:
+        1. Start FastAPI backend in a background thread
+        2. Show splash screen during initialization
+        3. Run database setup wizard if needed
+        4. Display the main GUI with embedded map viewer
     """
-    uvicorn.run(
-        "main:app",
-        host=os.getenv("HOST", "0.0.0.0"),
-        port=int(os.getenv("PORT", "8000")),
-        reload=os.getenv("DEBUG", "true").lower() == "true",
-        log_level=os.getenv("LOG_LEVEL", "info").lower()
-    )
+    import sys
+    from pathlib import Path
+
+    # Add parent directory to Python path for imports
+    parent_dir = Path(__file__).resolve().parent.parent
+    if str(parent_dir) not in sys.path:
+        sys.path.insert(0, str(parent_dir))
+
+    # Check if running in GUI mode or backend-only mode
+    if len(sys.argv) > 1 and sys.argv[1] == "--backend-only":
+        # Start backend only (for development/testing)
+        print("Starting backend only...")
+        uvicorn.run(
+            "main:app",
+            host=os.getenv("HOST", "0.0.0.0"),
+            port=int(os.getenv("PORT", "8000")),
+            reload=os.getenv("DEBUG", "true").lower() == "true",
+            log_level=os.getenv("LOG_LEVEL", "info").lower()
+        )
+    else:
+        # Start GUI application (which includes backend)
+        print("Starting GUI application (includes backend)...")
+        from pymypersonalmap.gui.app import main as gui_main
+        gui_main()

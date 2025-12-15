@@ -84,37 +84,33 @@ Categorie predefinite:
 
 ## 🗄️ Setup Database
 
-### Opzione 1: MySQL (Raccomandato)
+### SQLite Embedded (Predefinito) ✅
 
-L'applicazione supporta pienamente MySQL con tutte le funzionalità spatial.
+L'applicazione usa **SQLite** come database embedded - **nessuna installazione richiesta!**
 
-**Windows**:
+✅ **Zero configurazione**: Funziona subito
+✅ **File unico**: Tutto in `~/.mypersonalmap/mypersonalmap.db`
+✅ **Portabile**: Perfetto per desktop
+✅ **Calcoli geografici**: Formula Haversine pura Python
+
+Il database viene creato automaticamente al primo avvio.
+
+### MySQL (Opzionale - Solo per Sviluppo)
+
+Se preferisci MySQL durante lo sviluppo:
+
+**Docker**:
 ```bash
-# Scarica MySQL Installer da: https://dev.mysql.com/downloads/installer/
-# Segui il wizard di installazione
+docker run -d \
+  --name mysql-db-root \
+  -e MYSQL_ROOT_PASSWORD=password \
+  -p 3306:3306 \
+  mysql:8.0
+
+# Configura .env con DATABASE_TYPE=mysql
 ```
 
-**macOS**:
-```bash
-brew install mysql
-brew services start mysql
-mysql_secure_installation
-```
-
-**Linux (Ubuntu/Debian)**:
-```bash
-sudo apt update
-sudo apt install mysql-server
-sudo mysql_secure_installation
-```
-
-Il wizard dell'applicazione ti guiderà nella creazione del database al primo avvio.
-
-### Opzione 2: SQLite (Fallback)
-
-Puoi usare SQLite se non hai MySQL installato, ma con funzionalità limitate:
-- ⚠️ Supporto limitato per query spaziali avanzate
-- ⚠️ Performance ridotte su grandi dataset
+**Nota**: La versione distribuita userà sempre SQLite embedded.
 
 ---
 
@@ -145,20 +141,24 @@ Puoi usare SQLite se non hai MySQL installato, ma con funzionalità limitate:
 
 **Backend**:
 - FastAPI 0.109.0 (embedded in background thread)
-- SQLAlchemy 2.0.25 + GeoAlchemy2
-- MySQL 8.0+ / SQLite
+- SQLAlchemy 2.0.25
+- SQLite 3 (embedded, zero-config)
 
 **GUI**:
 - CustomTkinter 5.2.1 (cross-platform framework)
 - tkinterweb 3.24.8 (HTML rendering)
 - Folium 0.15.1 (interactive maps)
 
-**Geospatial**:
-- GeoPandas, Shapely, Fiona
-- GeoPy (geocoding)
+**Geographic**:
+- Pure Python Haversine (distanze)
+- GeoPy (geocoding - optional)
 
 **Build**:
 - PyInstaller 6.3.0
+
+**Testing**:
+- pytest 7.4.4 + pytest-cov
+- 47 test suite con 100% model coverage
 
 ### Setup Ambiente di Sviluppo
 
@@ -173,15 +173,39 @@ source venv/bin/activate  # Linux/macOS
 # venv\Scripts\activate   # Windows
 
 # Install dependencies
-pip install -e .
+pip install -r pymypersonalmap/requirements.txt
 
-# Setup database
+# Setup database (Docker - opzionale ma consigliato)
+docker run -d --name mysql-db-root \
+  -e MYSQL_ROOT_PASSWORD=password \
+  -p 3306:3306 mysql:8.0
+
+# Crea database
+docker exec mysql-db-root mysql -u root -ppassword -e \
+  "CREATE DATABASE mypersonalmap; \
+   CREATE USER 'mypersonalmap_user'@'%' IDENTIFIED BY 'mypersonalmap_pass'; \
+   GRANT ALL PRIVILEGES ON mypersonalmap.* TO 'mypersonalmap_user'@'%'; \
+   FLUSH PRIVILEGES;"
+
+# Setup configuration
 cp .env.example .env
-# Edit .env with your MySQL credentials
+# Edit .env se necessario (le credenziali di default funzionano con Docker)
 
-# Run application
-python pymypersonalmap/gui/app.py
+# Run application (GUI + Backend)
+PYTHONPATH=$(pwd) python3 pymypersonalmap/main.py
+
+# Oppure solo backend (per sviluppo API)
+PYTHONPATH=$(pwd) python3 pymypersonalmap/main.py --backend-only
+
+# Oppure con uvicorn direttamente
+cd pymypersonalmap && python main.py
 ```
+
+**Note**:
+- Il comando `PYTHONPATH=$(pwd)` è necessario quando si esegue da fuori la directory `pymypersonalmap`
+- L'applicazione avvia automaticamente FastAPI in background thread quando si usa la GUI
+- Il database e le tabelle vengono creati automaticamente al primo avvio
+- Le system labels vengono inizializzate automaticamente
 
 ### Build da Sorgenti
 
@@ -232,20 +256,29 @@ myPersonalMap/
 
 ## 🗺️ Roadmap
 
-### ✅ Fase 1 - MVP Desktop (Completato)
+### ✅ Fase 1 - Backend & Database (Completato)
+- [x] FastAPI REST API con SQLAlchemy
+- [x] MySQL database con spatial types
+- [x] Sistema di markers e labels
+- [x] Database migrations con Alembic
+- [x] Auto-inizializzazione database e system labels
+
+### ✅ Fase 2 - Desktop GUI (Completato)
 - [x] GUI desktop con CustomTkinter
 - [x] Mappa interattiva con Folium
-- [x] Sistema di markers e labels
+- [x] Backend manager (FastAPI in thread)
 - [x] Setup wizard database
-- [x] Build system cross-platform
+- [x] Splash screen durante startup
+- [x] Error handling e logging
+- [x] Integrated startup (GUI + Backend)
 
-### 🚧 Fase 2 - Funzionalità Core (In Corso)
+### 🚧 Fase 3 - Funzionalità Core (In Corso)
 - [ ] Implementazione completa CRUD markers via GUI
 - [ ] Integrazione geocoding (ricerca indirizzi)
 - [ ] Sistema di ricerca e filtri
 - [ ] Statistiche e dashboard
 
-### 📅 Fase 3 - Advanced Features
+### 📅 Fase 4 - Advanced Features
 - [ ] Import/Export (GPX, KML, GeoJSON, CSV)
 - [ ] Pianificazione itinerari (TSP algorithm)
 - [ ] Tracciati GPS

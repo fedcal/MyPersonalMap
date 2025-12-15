@@ -32,11 +32,8 @@ else:
 load_dotenv(dotenv_path=env_path)
 
 # ==================== DATABASE ====================
-DATABASE_USER = os.getenv("DATABASE_USER")
-DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-DATABASE_URL = os.getenv("DATABASE_URL")  # Host
-DATABASE_NAME = os.getenv("DATABASE_NAME")
-DATABASE_PORT = int(os.getenv("DATABASE_PORT", "3306"))
+# SQLite embedded database (zero-config, single-file)
+# No database configuration needed - works out of the box!
 
 # ==================== SERVER ====================
 SERVER_HOST = os.getenv("SERVER_HOST", "localhost")
@@ -79,11 +76,28 @@ ENABLE_STATISTICS = os.getenv("ENABLE_STATISTICS", "true").lower() == "true"
 ENABLE_SHARING = os.getenv("ENABLE_SHARING", "true").lower() == "true"
 
 # ==================== COMPUTED VALUES ====================
-# Costruisce DATABASE_URL completo dalle componenti
-database_url = (
-    f"mysql+pymysql://{DATABASE_USER}:{DATABASE_PASSWORD}"
-    f"@{DATABASE_URL}:{DATABASE_PORT}/{DATABASE_NAME}"
-)
+
+def get_database_url():
+    """
+    Get SQLite database URL
+
+    Returns the path to the embedded SQLite database file:
+    - Production (PyInstaller): ~/.mypersonalmap/mypersonalmap.db
+    - Development: pymypersonalmap/mypersonalmap.db
+    """
+    if getattr(sys, 'frozen', False):
+        # Production: store in user data directory
+        db_dir = Path.home() / '.mypersonalmap'
+        db_dir.mkdir(parents=True, exist_ok=True)
+        db_path = db_dir / 'mypersonalmap.db'
+    else:
+        # Development: store in project directory
+        db_path = Path(__file__).parent.parent / 'mypersonalmap.db'
+
+    return f"sqlite:///{db_path}"
+
+# Get database URL
+database_url = get_database_url()
 
 # Alias per compatibilità
 host = SERVER_HOST

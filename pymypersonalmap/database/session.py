@@ -2,19 +2,26 @@
 Database Session Management
 
 SQLAlchemy database session configuration and management.
+Uses SQLite embedded database (zero-config, single-file).
 """
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from pymypersonalmap.config.settings import database_url, DB_ECHO
+import logging
 
-# Create SQLAlchemy engine
+logger = logging.getLogger(__name__)
+
+# Create SQLAlchemy engine for SQLite embedded database
 engine = create_engine(
     database_url,
     echo=DB_ECHO,
-    pool_pre_ping=True,
-    pool_recycle=3600,
+    connect_args={
+        'check_same_thread': False,  # Allow multi-threading
+        'timeout': 30,  # Longer timeout for concurrent access
+    }
 )
+logger.info(f"Using SQLite database: {database_url}")
 
 # Create SessionLocal class
 SessionLocal = sessionmaker(

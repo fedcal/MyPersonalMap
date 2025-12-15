@@ -105,17 +105,14 @@ def test_settings_config():
     from pymypersonalmap.config import settings
 
     # Verifica variabili critiche
-    assert hasattr(settings, 'DATABASE_USER')
-    assert hasattr(settings, 'DATABASE_PASSWORD')
-    assert hasattr(settings, 'DATABASE_URL')
-    assert hasattr(settings, 'DATABASE_NAME')
     assert hasattr(settings, 'SECRET_KEY')
     assert hasattr(settings, 'SERVER_HOST')
     assert hasattr(settings, 'SERVER_PORT')
 
-    # Verifica computed database_url
+    # Verifica computed database_url (SQLite)
     assert hasattr(settings, 'database_url')
-    assert 'mysql+pymysql' in settings.database_url
+    assert 'sqlite:///' in settings.database_url
+    assert 'mypersonalmap.db' in settings.database_url
 
     print("✓ Settings configuration test passed")
 
